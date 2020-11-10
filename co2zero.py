@@ -86,15 +86,18 @@ def main():
 ##### Ende alter Teil 
 
 ## neu von Michi
-            msg1 = "Aktuell: " + str(ppm)
-            msg2 = "CO2 Wert: " + str(mov_average_ppm)
+            ppm = getPollutionData()
+            ppmQueue.append(ppm)
+            mov_average_ppm = sum(ppmQueue) / SLIDING_WINDOWS_SIZE
             temperatur = str(Adafruit_DHT.read_retry(11, 4))
             now = datetime.now()
             uhrzeit = now.strftime("%H:%M") 
-            msg3 = temperatur[7:-1] +"C  " + uhrzeit + " Uhr"
-            print(msg1 + ", " + msg2 + ", " + msg3)
-            lcd.lcd_string(msg2, 1)
-            lcd.lcd_string(msg3, 0xC0)
+            msg1 = temperatur[7:-1] +"C "+" CO2: " + str(mov_average_ppm)
+            msg2 = temperatur[1:-7] +"%  "  + uhrzeit + " Uhr"
+            print(msg1 + ", " + msg2)
+            lcd.lcd_string(msg1, 1)
+            lcd.lcd_string(msg2, 0xC0)
+
  ### Ende neuer Teil       
             if mov_average_ppm in range(0, 1000):
                 green()
@@ -113,12 +116,12 @@ if __name__ == "__main__":
 
     print("CO2Zero startet, bitte warten...")
 
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname + ".local")
-    lcd.lcd_string("CO2Zero startet, bitte warten...", 1)
-    lcd.lcd_string(ip_address, 0xC0)
+#    hostname = socket.gethostname()
+#    ip_address = socket.gethostbyname(hostname + ".local")
+    lcd.lcd_string("CO2Zero startet,", 1)
+    lcd.lcd_string("bitte warten ...", 0xC0)
 
-    print("IP: " + ip_address)
+#    print("IP: " + ip_address)
 
     time.sleep(2)
 
